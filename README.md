@@ -30,3 +30,4 @@ git push -u origin main
 ## 下一步
 
 当前 V1 提供完整页面流程、响应式界面、数据库模型与 RLS 权限基础。将演示数据替换为 Supabase CRUD、Storage 上传及邮件通知可作为 V1.1。
+Deployment: Cloudflare Workers
