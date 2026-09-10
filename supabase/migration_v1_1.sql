@@ -1,0 +1,12 @@
+create or replace function public.handle_new_user() returns trigger language plpgsql security definer set search_path=public as $$ begin insert into public.profiles(id,full_name,role) values(new.id,coalesce(new.raw_user_meta_data->>'full_name',split_part(new.email,'@',1)),'engineer') on conflict(id) do nothing; return new; end; $$;
+drop trigger if exists on_auth_user_created on auth.users;
+create trigger on_auth_user_created after insert on auth.users for each row execute procedure public.handle_new_user();
+insert into public.profiles(id,full_name,role) select id,coalesce(raw_user_meta_data->>'full_name',split_part(email,'@',1)),'engineer'::public.app_role from auth.users on conflict(id) do nothing;
+drop policy if exists "profiles self or admin" on public.profiles;
+create policy "authenticated read profiles" on public.profiles for select to authenticated using(true);
+create policy "users update own profile" on public.profiles for update to authenticated using(id=auth.uid()) with check(id=auth.uid());
+drop policy if exists "project members read" on public.projects; drop policy if exists "pm manage projects" on public.projects;
+create policy "authenticated manage projects" on public.projects for all to authenticated using(true) with check(true);
+drop policy if exists "members visible" on public.project_members; drop policy if exists "pm manages members" on public.project_members;
+create policy "authenticated manage members" on public.project_members for all to authenticated using(true) with check(true);
+do $$ declare t text; begin foreach t in array array['requirements','test_cases','tasks','risks','milestones','handover_items','attachments','comments'] loop execute format('drop policy if exists "project member read %1$s" on public.%1$I',t); execute format('drop policy if exists "team write %1$s" on public.%1$I',t); execute format('create policy "authenticated manage %1$s" on public.%1$I for all to authenticated using(true) with check(true)',t); end loop; end $$;

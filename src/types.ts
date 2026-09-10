@@ -1,3 +1,2 @@
-export type Status='需求分析'|'技术验证'|'现场实施'|'已交付';
-export type Project={id:string;name:string;customer:string;pm:string;engineer:string;status:Status;progress:number;risk:'低'|'中'|'高'|'严重';start:string;delivery:string;description:string};
-export type Item={id:string;projectId:string;title:string;owner:string;status:string;priority?:string;date?:string;detail?:string};
+export type Project={id:string;name:string;customer:string;status:string;progress:number;risk:string;start_date?:string|null;delivery_date?:string|null;description:string|null;created_at?:string;pm?:string;engineer?:string;start?:string;delivery?:string};
+export type Item={id:string;projectId:string;title:string;status:string;priority?:string;detail?:string;owner?:string;date?:string};
