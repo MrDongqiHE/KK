@@ -30,6 +30,13 @@ git push -u origin main
 ## 下一步
 
 当前 V1 提供完整页面流程、响应式界面、数据库模型与 RLS 权限基础。将演示数据替换为 Supabase CRUD、Storage 上传及邮件通知可作为 V1.1。
+
+## V1.2 安全部署顺序
+
+1. 先执行 `supabase/schema.sql`（全新项目）和 `supabase/migration_v1_1.sql`。
+2. 再执行 `supabase/migration_v1_2.sql`，收紧项目成员权限并建立地区、工厂、产线和问题基础模型。
+3. 在 Supabase SQL Editor 中将指定账号设为管理员：`update public.profiles set role='admin' where id=(select id from auth.users where email='你的邮箱');`
+4. 后续功能顺序和需要确认的业务规则见 `docs/ROADMAP_V1_2.md`。
 traceLog：
 10092026_1808_Deployment: Cloudflare Workers
 10092026_1816_Deployment: Cloudflare Workers + Supabase
